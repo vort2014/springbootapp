@@ -5,6 +5,8 @@ Template project for spring boot application
 
 ```shell
 docker compose up
+curl -v http://localhost:8080/employees
+docker compose down
 ```
 
 Approaches:
@@ -18,4 +20,4 @@ Tasks:
 4. Write logic
 5. Write integration tests
 6. Write unit tests
-7. 
+7.  Database JDBC URL [jdbc:postgresql://localhost:32815/test?loggerLevel=OFF] in IT tests
