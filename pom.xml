@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -14,10 +14,9 @@
     <properties>
         <java.version>25</java.version>
 
-        <skipSurefire>false</skipSurefire>
-
         <springdoc-openapi-starter-webmvc-ui.version>3.0.1</springdoc-openapi-starter-webmvc-ui.version>
         <rest-assured.version>6.0.0</rest-assured.version>
+        <org.testcontainers.postgresql.version>1.21.4</org.testcontainers.postgresql.version>
     </properties>
 
     <dependencyManagement>
@@ -74,7 +73,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.21.4</version>
+            <version>${org.testcontainers.postgresql.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- End database section -->
@@ -120,71 +119,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <!--
-                    To run single IT test from command line:
-                    mvn -DskipSurefire=true -Dit.test=DistanceDurationQueryResolverIT#getDistanceDurationTest verify
-                    -->
-                    <skip>${skipSurefire}</skip>
-                    <!-- remove mockito warnings -->
                     <argLine>
-                        -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                        -XX:+EnableDynamicAgentLoading
                         -Xshare:off
                     </argLine>
                 </configuration>
             </plugin>
-
-            <!-- This section is for IT tests and may be eliminated -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${build-helper-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>add-integration-test-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/it/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-integration-test-resources</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>add-test-resource</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>src/it/resources</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
                 <configuration>
-                    <trimStackTrace>false</trimStackTrace>
-                    <!--
-                    https://stackoverflow.com/questions/50787704/maven-failsafe-fails-with-java-lang-noclassdeffounderror -->
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>${project.groupId}:${project.artifactId}</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
-                    <additionalClasspathElements>
-                        <additionalClasspathElement>${project.build.outputDirectory}</additionalClasspathElement>
-                    </additionalClasspathElements>
-                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                    <!-- remove mockito warnings -->
                     <argLine>
                         -XX:+EnableDynamicAgentLoading
                         -Xshare:off
@@ -200,7 +145,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- End of IT tests section -->
         </plugins>
     </build>
 </project>

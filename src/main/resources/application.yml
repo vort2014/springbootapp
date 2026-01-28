@@ -3,21 +3,13 @@ spring:
     import: optional:file:.env[.properties]
   jpa:
     open-in-view: false
-#    show-sql: false
+#    show-sql: true # show sql statements
     hibernate:
       ddl-auto: create # Creates the schema and destroys previous data
       properties:
         hibernate.jdbc.time_zone: UTC
         hibernate.default_schema: ${DATABASE_SCHEMA}
-  #      hibernate.jdbc.batch_size: 100 # batch size of inserts and updates
-  #      hibernate.order_inserts: true # enable batch inserts
-  #      hibernate.order_updates: true # enable batch updates
-  #      hibernate.batch_versioned_data: true #  enable batch updates
   datasource:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_SCHEMA}?${DATABASE_PROPERTIES}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
