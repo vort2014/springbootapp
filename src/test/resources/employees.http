@@ -1,0 +1,19 @@
+### GET all employees
+GET http://localhost:8080/employees
+
+###
+
+### Save user
+POST http://localhost:8080/employees
+Content-Type: application/json
+
+{
+    "id": null,
+    "firstName": "John",
+    "lastName": "Dawn",
+    "email": null,
+    "salary": 10000.123,
+    "startDate": "2024-01-14T09:19:56.639Z",
+    "endDate": "2025-01-14T09:19:56.639Z"
+}
+###

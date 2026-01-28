@@ -1,0 +1,33 @@
+networks:
+  springbootapp-network:
+    driver: bridge
+services:
+  backend:
+    build: .
+    container_name: backend
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    networks:
+      - springbootapp-network
+  db:
+    image: postgres:18
+    container_name: db
+    restart: always
+    shm_size: 128mb # set shared memory limit when using docker compose
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_SCHEMA}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "${DATABASE_PORT}:5432"
+    networks:
+      - springbootapp-network
+
+
