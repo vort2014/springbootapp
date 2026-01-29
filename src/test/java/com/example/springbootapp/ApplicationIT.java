@@ -20,9 +20,9 @@ public abstract class ApplicationIT {
 
     // Repositories
     @Autowired
-    private EmployeeRepository employeeRepository;
+    protected EmployeeRepository employeeRepository;
     @Autowired
-    private CompanyRepository companyRepository;
+    protected CompanyRepository companyRepository;
 
     @BeforeEach
     void setUp() {

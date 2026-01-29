@@ -2,6 +2,7 @@ package com.example.springbootapp.dao.employee;
 
 import com.example.springbootapp.dao.company.CompanyEntity;
 import com.example.springbootapp.web.controller.employee.EmployeeRequestJson;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -33,7 +34,9 @@ public class EmployeeEntity {
     String lastName;
     String email;
     BigDecimal salary;
+    @Column(secondPrecision = 3)
     Instant startDate;
+    @Column(secondPrecision = 3)
     Instant endDate;
     @ManyToOne
     @JoinColumn(name = "company_id")

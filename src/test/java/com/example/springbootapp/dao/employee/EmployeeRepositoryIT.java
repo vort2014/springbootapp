@@ -1,9 +1,7 @@
 package com.example.springbootapp.dao.employee;
 
 import com.example.springbootapp.ApplicationIT;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -14,22 +12,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class EmployeeRepositoryIT extends ApplicationIT {
 
-    @Autowired
-    protected EmployeeRepository employeeRepository;
-
     @Test
-    @Disabled
     void insertEmployee() {
 
         // given
-        var startDate = Instant.now().minus(1, ChronoUnit.DAYS);
-        var endDate = Instant.now();
+        var startDate = Instant.now()
+                .minus(1, ChronoUnit.DAYS)
+                .truncatedTo(ChronoUnit.MILLIS);
+        var endDate = Instant.now().truncatedTo(ChronoUnit.MILLIS);
         var employee = EmployeeEntity.builder()
                 .id(UUID.randomUUID().toString())
                 .firstName("firstName")
                 .lastName("LastName")
                 .email("example@example.com")
-                .salary(BigDecimal.valueOf(10.10D))
+                .salary(BigDecimal.valueOf(10.12D))
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
@@ -44,8 +40,8 @@ class EmployeeRepositoryIT extends ApplicationIT {
         assertThat(actual.getFirstName()).isEqualTo("firstName");
         assertThat(actual.getLastName()).isEqualTo("LastName");
         assertThat(actual.getEmail()).isEqualTo("example@example.com");
-//        assertThat(actual.getSalary()).isEqualTo(BigDecimal.valueOf(10.10D));
-//        assertThat(actual.getStartDate()).isEqualTo(startDate);
-//        assertThat(actual.getEndDate()).isEqualTo(endDate);
+        assertThat(actual.getSalary()).isEqualTo(BigDecimal.valueOf(10.12D));
+        assertThat(actual.getStartDate()).isEqualTo(startDate);
+        assertThat(actual.getEndDate()).isEqualTo(endDate);
     }
 }
