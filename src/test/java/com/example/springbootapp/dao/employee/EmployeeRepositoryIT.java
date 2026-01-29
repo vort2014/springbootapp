@@ -2,6 +2,7 @@ package com.example.springbootapp.dao.employee;
 
 import com.example.springbootapp.ApplicationIT;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -11,6 +12,9 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EmployeeRepositoryIT extends ApplicationIT {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @Test
     void insertEmployee() {
@@ -25,7 +29,7 @@ class EmployeeRepositoryIT extends ApplicationIT {
                 .firstName("firstName")
                 .lastName("LastName")
                 .email("example@example.com")
-                .salary(BigDecimal.valueOf(10.12D))
+                .salary(BigDecimal.valueOf(10.123D))
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
@@ -36,7 +40,7 @@ class EmployeeRepositoryIT extends ApplicationIT {
         // then
         var employees = employeeRepository.findAll();
         assertThat(employees).hasSize(1);
-        var actual = employees.iterator().next();
+        var actual = employees.getFirst();
         assertThat(actual.getFirstName()).isEqualTo("firstName");
         assertThat(actual.getLastName()).isEqualTo("LastName");
         assertThat(actual.getEmail()).isEqualTo("example@example.com");

@@ -29,10 +29,12 @@ import java.util.UUID;
 public class EmployeeEntity {
 
     @Id
+    @Column(length = 36)
     String id;
     String firstName;
     String lastName;
     String email;
+    @Column(scale = 2)
     BigDecimal salary;
     @Column(secondPrecision = 3)
     Instant startDate;
