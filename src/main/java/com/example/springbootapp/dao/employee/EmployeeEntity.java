@@ -18,8 +18,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -47,7 +45,7 @@ public class EmployeeEntity {
     Instant startDate;
     @Column(secondPrecision = 3)
     Instant endDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // By default, @ManyToOne associations use the FetchType.EAGER strategy, which can lead to N+1
     @JoinColumn(name = "company_id")
     CompanyEntity company;
 

@@ -3,7 +3,6 @@ package com.example.springbootapp.dao.employee;
 import com.example.springbootapp.ApplicationIT;
 import com.example.springbootapp.dao.company.CompanyEntity;
 import com.example.springbootapp.dao.company.CompanyRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -79,13 +78,10 @@ class EmployeeRepositoryIT extends ApplicationIT {
         employeeRepository.saveAll(employees);
 
         // when
-
-
-        var q = employeeRepository.findAll();
-        var e = q.iterator().next();
-        var company = e.getCompany();
-        var employees2 = company.getEmployees();
-        var ee = employees2.iterator().next();
-        System.out.println(ee);
+        var employeeEntities = employeeRepository.findAllWithJoinFetch();
+        var employeeEntity1 = employeeEntities.getFirst();
+        var companyEntity = employeeEntity1.getCompany();
+        var employeeEntities2 = companyEntity.getEmployees();
+        var employeeEntity2 = employeeEntities2.iterator().next();
     }
 }
