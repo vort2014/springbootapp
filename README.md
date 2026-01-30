@@ -17,9 +17,7 @@ Approaches:
 Tasks:
 1. Amend README.md
 2. Add CORS
-3. Check N + 1 problem
 4. Write logic
 5. Write integration tests
 6. Write unit tests
 7. Database JDBC URL [jdbc:postgresql://localhost:32815/test?loggerLevel=OFF] in IT tests
-8. Fix @OneToMany @ManyToOne (Cannot lazily initialize collection of role '' with key '' (no session) in tests)
