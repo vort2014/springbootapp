@@ -173,7 +173,6 @@ public class EmployeeControllerIT extends ApplicationIT {
     void findAll() {
 
         // Given
-        var employeeId = UUID.randomUUID().toString();
         var firstName = "John";
         var lastName = "Dawn";
         var email = "john.dawn@example.com";
@@ -182,12 +181,10 @@ public class EmployeeControllerIT extends ApplicationIT {
         var endDate = ZonedDateTime.now().minusYears(1).toInstant().truncatedTo(ChronoUnit.MILLIS);
         var companyName = "Test Company";
         var company = CompanyEntity.builder()
-                .id(UUID.randomUUID().toString())
                 .name(companyName)
                 .build();
         company = companyRepository.save(company);
         var employee = EmployeeEntity.builder()
-                .id(employeeId)
                 .firstName(firstName)
                 .lastName(lastName)
                 .email(email)
@@ -196,7 +193,8 @@ public class EmployeeControllerIT extends ApplicationIT {
                 .endDate(endDate)
                 .company(company)
                 .build();
-        employeeRepository.save(employee);
+        var employeeId = employeeRepository.save(employee)
+                .getId();
 
         when()
                 .get("/employees").
@@ -219,7 +217,6 @@ public class EmployeeControllerIT extends ApplicationIT {
     void delete() {
 
         // Given
-        var employeeId = UUID.randomUUID().toString();
         var firstName = "John";
         var lastName = "Dawn";
         var email = "john.dawn@example.com";
@@ -228,12 +225,10 @@ public class EmployeeControllerIT extends ApplicationIT {
         var endDate = ZonedDateTime.now().minusYears(1).toInstant().truncatedTo(ChronoUnit.MILLIS);
         var companyName = "Test Company";
         var company = CompanyEntity.builder()
-                .id(UUID.randomUUID().toString())
                 .name(companyName)
                 .build();
         company = companyRepository.save(company);
         var employee = EmployeeEntity.builder()
-                .id(employeeId)
                 .firstName(firstName)
                 .lastName(lastName)
                 .email(email)
@@ -242,7 +237,8 @@ public class EmployeeControllerIT extends ApplicationIT {
                 .endDate(endDate)
                 .company(company)
                 .build();
-        employeeRepository.save(employee);
+        var employeeId = employeeRepository.save(employee)
+                .getId();
 
         when()
                 .delete("/employees/{id}", employeeId).

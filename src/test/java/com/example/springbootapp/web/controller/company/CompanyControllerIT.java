@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
-import java.util.UUID;
-
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -24,11 +22,10 @@ public class CompanyControllerIT extends ApplicationIT {
     void findAll() {
 
         // Given
-        var companyId = UUID.randomUUID().toString();
-        companyRepository.save(CompanyEntity.builder()
-                .id(companyId)
+        var companyId = companyRepository.save(CompanyEntity.builder()
                 .name("companyName")
-                .build());
+                .build())
+                .getId();
 
         when()
                 .get("/companies").

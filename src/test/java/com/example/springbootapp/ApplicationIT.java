@@ -20,10 +20,6 @@ public abstract class ApplicationIT {
     @LocalServerPort
     private Integer port;
 
-    // Repositories
-    @Autowired
-    private List<JpaRepository> repositories;
-
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
@@ -31,9 +27,9 @@ public abstract class ApplicationIT {
 //        RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter()); // enableLoggingOfRequestAndResponse for all tests
     }
 
+    // Clear all data in the database
     @AfterEach
-    void afterEach() {
-        // Clear all data in the database
+    void afterEach(@Autowired List<JpaRepository> repositories) {
         repositories.forEach(CrudRepository::deleteAll);
     }
 }
