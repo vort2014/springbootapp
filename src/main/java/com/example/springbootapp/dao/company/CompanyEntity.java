@@ -1,8 +1,10 @@
 package com.example.springbootapp.dao.company;
 
 import com.example.springbootapp.dao.employee.EmployeeEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,6 +18,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.Collection;
 
@@ -35,7 +39,8 @@ public class CompanyEntity {
     String id;
     @Column(length = 100)
     String name;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id")
+    @Fetch(FetchMode.SUBSELECT)
     Collection<EmployeeEntity> employees;
 }

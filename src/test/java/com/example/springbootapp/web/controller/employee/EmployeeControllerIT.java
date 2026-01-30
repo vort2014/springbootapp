@@ -224,10 +224,9 @@ public class EmployeeControllerIT extends ApplicationIT {
         var startDate = ZonedDateTime.now().minusYears(2).toInstant().truncatedTo(ChronoUnit.MILLIS);
         var endDate = ZonedDateTime.now().minusYears(1).toInstant().truncatedTo(ChronoUnit.MILLIS);
         var companyName = "Test Company";
-        var company = CompanyEntity.builder()
+        var company = companyRepository.save(CompanyEntity.builder()
                 .name(companyName)
-                .build();
-        company = companyRepository.save(company);
+                .build());
         var employee = EmployeeEntity.builder()
                 .firstName(firstName)
                 .lastName(lastName)
@@ -245,5 +244,6 @@ public class EmployeeControllerIT extends ApplicationIT {
         then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
         assertThat(employeeRepository.findById(employeeId)).isEmpty();
+        assertThat(companyRepository.findById(company.getId())).isNotEmpty();
     }
 }

@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,17 +30,16 @@ class EmployeeRepositoryIT extends ApplicationIT {
                 .minus(1, ChronoUnit.DAYS)
                 .truncatedTo(ChronoUnit.MILLIS);
         var endDate = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-        var employee = EmployeeEntity.builder()
+
+        // when
+        employeeRepository.saveAndFlush(EmployeeEntity.builder()
                 .firstName("firstName")
                 .lastName("LastName")
                 .email("example@example.com")
                 .salary(BigDecimal.valueOf(10.123D))
                 .startDate(startDate)
                 .endDate(endDate)
-                .build();
-
-        // when
-        employeeRepository.save(employee);
+                .build());
 
         // then
         var employees = employeeRepository.findAll();
@@ -56,7 +54,6 @@ class EmployeeRepositoryIT extends ApplicationIT {
     }
 
     @Test
-    @Disabled
     void findAll() {
 
         // given
