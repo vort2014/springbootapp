@@ -8,12 +8,12 @@ services:
     restart: on-failure
     env_file:
       - .env
-    depends_on:
-      - db
     ports:
       - "8080:8080"
     networks:
       - springbootapp-network
+    environment:
+      - DATABASE_HOST=db # redefines localhost in .env file
   db:
     image: postgres:18
     container_name: db

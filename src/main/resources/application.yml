@@ -13,7 +13,3 @@ spring:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_SCHEMA}?${DATABASE_PROPERTIES}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-#logging:
-#  level:
-#    org.hibernate.SQL: debug # the same spring.jpa.show-sql=true
-#    org.hibernate.orm.jdbc.bind: trace # show values in sql statements
