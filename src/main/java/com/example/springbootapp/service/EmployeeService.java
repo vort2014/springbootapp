@@ -44,7 +44,7 @@ public class EmployeeService {
      */
     @Transactional
     public EmployeeResponseJson update(String id, EmployeeRequestJson json) {
-        log.info("Chw");
+        log.info("Update employee with id={}", id);
 
         // Check that id in the url path is equal to the id in the json body
         if (!json.getId().equals(id)) {
