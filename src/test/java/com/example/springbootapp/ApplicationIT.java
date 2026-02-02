@@ -1,6 +1,7 @@
 package com.example.springbootapp;
 
 import io.restassured.RestAssured;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("it")
+@Slf4j
 public abstract class ApplicationIT {
 
     @LocalServerPort
