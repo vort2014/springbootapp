@@ -13,3 +13,13 @@ spring:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_SCHEMA}?${DATABASE_PROPERTIES}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+
+# Manually acknowledge/reject messages
+#  rabbitmq.listener.simple.acknowledge-mode: manual
+
+# these are default values
+#  rabbitmq:
+#    username: guest
+#    password: guest
+#    host: localhost
+#    port: 5672

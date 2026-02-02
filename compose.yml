@@ -29,5 +29,11 @@ services:
       - "${DATABASE_PORT}:5432"
     networks:
       - springbootapp-network
-
-
+  rabbitmq:
+    image: rabbitmq:latest # login/password guest/guest by default here in container and in spring configuration
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+    networks:
+      - springbootapp-network
