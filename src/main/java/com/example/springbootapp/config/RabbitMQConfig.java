@@ -1,6 +1,8 @@
 package com.example.springbootapp.config;
 
-import com.example.springbootapp.rabbitmq.RabbitMQReceiver;
+import com.example.springbootapp.rabbitmq.RabbitMQListener;
+import com.rabbitmq.stream.Environment;
+import com.rabbitmq.stream.OffsetSpecification;
 import org.springframework.amqp.core.AnonymousQueue;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -8,11 +10,20 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.ContainerCustomizer;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.rabbit.stream.config.StreamRabbitListenerContainerFactory;
+import org.springframework.rabbit.stream.listener.StreamListenerContainer;
+import org.springframework.rabbit.stream.producer.RabbitStreamTemplate;
+import org.springframework.rabbit.stream.support.StreamAdmin;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.time.Duration;
 
 /**
  * https://docs.spring.io/spring-boot/reference/messaging/amqp.html
@@ -29,6 +40,14 @@ public class RabbitMQConfig {
     public static final String TOPIC_EXCHANGE_NAME = "TOPIC_EXCHANGE_NAME1";
     public static final String DIRECT_EXCHANGE_NAME = "DIRECT_EXCHANGE_NAME";
     public static final String FANOUT_EXCHANGE_NAME = "FANOUT_EXCHANGE_NAME1";
+
+    public static final String DIRECT_EXCHANGE_NAME_FOR_RPC = "DIRECT_EXCHANGE_NAME_FOR_RPC";
+    public static final String QUEUE_NAME_FOR_RPC = "QUEUE_NAME_FOR_RPC";
+
+    public static final String STREAM_NAME1 = "stream.queue1";
+    public static final String STREAM_NAME3 = "stream.queue3";
+    public static final String STREAM_NAME3_LISTENER_FACTORY_NAME = "nativeFactory";
+
     private static final boolean DURABLE = false; // we don't need messages after restart
 
     // If we send json object in AMQP messages we need to serialize/deserialize them to json
@@ -37,6 +56,11 @@ public class RabbitMQConfig {
         return new JacksonJsonMessageConverter();
     }
 
+    /**
+     * Define non-durable queues (they are removed when RabbitMQ server stops)
+     * Consumers can connect only to queues and receives messages.
+     * Producers many send messages to exchages and queues.
+     */
     @Bean
     Queue queue1() {
         return new Queue(QUEUE_NAME1, DURABLE);
@@ -55,6 +79,7 @@ public class RabbitMQConfig {
 
 
     /**
+     * Topic Exchange
      * Send messages to queues based on routing key wildcard
      */
     @Bean
@@ -73,6 +98,7 @@ public class RabbitMQConfig {
 
 
     /**
+     * Direct Exchange
      * Send messages to queues based on routing key, no wildcards allowed
      * the routing key should be exactly the same
      */
@@ -91,6 +117,7 @@ public class RabbitMQConfig {
 
 
     /**
+     * Fanout Exchange
      * sends messages to all queues which are bound despite routing key
      */
     @Bean
@@ -109,15 +136,54 @@ public class RabbitMQConfig {
     }
 
 
-
-
-
+    /**
+     * Exchange + Queue for RPC calls
+     */
     @Bean
-    RabbitMQReceiver receiver1() {
-        return new RabbitMQReceiver("receiver1");
+    Queue queueForRpc() {
+        return new Queue(QUEUE_NAME_FOR_RPC, DURABLE);
     }
     @Bean
-    RabbitMQReceiver receiver2() {
-        return new RabbitMQReceiver("receiver2");
+    DirectExchange directExchangeForRpc() {
+        return new DirectExchange(DIRECT_EXCHANGE_NAME_FOR_RPC, DURABLE, true);
+    }
+    @Bean
+    Binding directExchangeBindingForRpc() {
+        return BindingBuilder.bind(queueForRpc()).to(directExchangeForRpc()).with("some.rpc");
+    }
+
+
+    @Bean
+    RabbitMQListener receiver1() {
+        return new RabbitMQListener("receiver1");
+    }
+    @Bean
+    RabbitMQListener receiver2() {
+        return new RabbitMQListener("receiver2");
+    }
+
+
+    /**
+     * RabbitMQ Streams
+     */
+    @Bean
+    @Profile("!test && !it")
+    StreamAdmin streamAdmin(Environment env) {
+        return new StreamAdmin(env, sc -> {
+            sc.stream(STREAM_NAME1).maxAge(Duration.ofHours(2)).create();
+            sc.stream(STREAM_NAME3).create();
+        });
+    }
+    @Bean
+    @Profile("!test && !it")
+    RabbitStreamTemplate stream1(Environment env) {
+        RabbitStreamTemplate template = new RabbitStreamTemplate(env, STREAM_NAME1);
+        template.setMessageConverter(jacksonJsonMessageConverter());
+        return template;
+    }
+    @Bean
+    @Profile("!test && !it")
+    RabbitStreamTemplate stream3(Environment env) {
+        return new RabbitStreamTemplate(env, STREAM_NAME3);
     }
 }

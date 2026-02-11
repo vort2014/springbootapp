@@ -30,10 +30,18 @@ services:
     networks:
       - springbootapp-network
   rabbitmq:
-    image: rabbitmq:latest # login/password guest/guest by default here in container and in spring configuration
+    image: rabbitmq:management-alpine # login/password guest/guest by default here in container and in spring configuration
     container_name: rabbitmq
     restart: always
+    configs:
+      - source: plugins
+        target: /etc/rabbitmq/enabled_plugins # we need to enable stream plugin
     ports:
-      - "5672:5672"
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # HTTP management UI
+      - "5552:5552" # Streams protocol
     networks:
       - springbootapp-network
+configs:
+  plugins:
+    content: "[rabbitmq_management, rabbitmq_mqtt, rabbitmq_stream, rabbitmq_stomp, rabbitmq_stream_management]."

@@ -10,10 +10,14 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Producer sends messages to exchanges, then exchange sends message to queue.
+ * Listeners receive messages from queue.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RabbitMQSender {
+public class RabbitMQProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -26,7 +30,7 @@ public class RabbitMQSender {
         var message = UUID.randomUUID().toString();
 //        var message = CompanyResponseJson.builder().id(UUID.randomUUID().toString()).name("companyName").build();
         rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME1, message);
-        log.info("Message sent '{}' to queue={}", message, RabbitMQConfig.QUEUE_NAME1);
+        log.info("Message is sent '{}' to queue={}", message, RabbitMQConfig.QUEUE_NAME1);
     }
 
     /**
@@ -39,7 +43,7 @@ public class RabbitMQSender {
     void sendToTopicExchange() {
         var message = UUID.randomUUID().toString();
         rabbitTemplate.convertAndSend(RabbitMQConfig.TOPIC_EXCHANGE_NAME, "foo.bar.baz", message);
-        log.info("Message sent '{}' to topicExchange={}", message, RabbitMQConfig.TOPIC_EXCHANGE_NAME);
+        log.info("Message is sent '{}' to topicExchange={}", message, RabbitMQConfig.TOPIC_EXCHANGE_NAME);
     }
 
     /**
@@ -49,16 +53,31 @@ public class RabbitMQSender {
     void sendToFanoutExchange() {
         var message = UUID.randomUUID().toString();
         rabbitTemplate.convertAndSend(RabbitMQConfig.FANOUT_EXCHANGE_NAME, "qq.ww.ww", message);
-        log.info("Message sent '{}' to fanoutExchange={}", message, RabbitMQConfig.FANOUT_EXCHANGE_NAME);
+        log.info("Message is sent '{}' to fanoutExchange={}", message, RabbitMQConfig.FANOUT_EXCHANGE_NAME);
     }
 
     /**
-     * Messages will be sent if routing key exactly match
+     * Messages will be sent if routing key exactly matches
      */
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
     void sendToDirectExchange() {
         var message = UUID.randomUUID().toString();
         rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE_NAME, "orange", message);
-        log.info("Message sent '{}' to directExchange={}", message, RabbitMQConfig.DIRECT_EXCHANGE_NAME);
+        log.info("Message is sent '{}' to directExchange={}", message, RabbitMQConfig.DIRECT_EXCHANGE_NAME);
+    }
+
+    /**
+     * Send rpc call.
+     * RPC is a pattern which allows to call remote server as local method.
+     * Here we don't catch exceptions or handle timeouts.
+     *
+     * client message (with replyTo, correlationId headers) > exchange > queue > receiver(server) > replyTo_queue > client
+     */
+    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    void sendRpcCall() {
+        var message = UUID.randomUUID().toString();
+        var res = rabbitTemplate.convertSendAndReceive(RabbitMQConfig.DIRECT_EXCHANGE_NAME_FOR_RPC, "some.rpc", message);
+        log.info("Message is sent '{}' to sendRpcCall={}", message, RabbitMQConfig.DIRECT_EXCHANGE_NAME_FOR_RPC);
+        log.info("RPC response='{}'", res);
     }
 }

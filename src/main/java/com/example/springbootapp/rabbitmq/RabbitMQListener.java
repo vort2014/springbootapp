@@ -10,6 +10,7 @@ import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * We need to create two bean in configuration because RabbitMQ forbids
@@ -17,7 +18,7 @@ import java.io.IOException;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class RabbitMQReceiver {
+public class RabbitMQListener {
 
     private final String receiverName;
 
@@ -41,6 +42,7 @@ public class RabbitMQReceiver {
     }
 
     /**
+     * Manual acknowledge and rejection
      * This property should be set in application.yml:
      *
      * spring.rabbitmq.listener.simple.acknowledge-mode: manual
@@ -54,5 +56,16 @@ public class RabbitMQReceiver {
         } catch (Exception e) {
             channel.basicReject(deliveryTag, false);
         }
+    }
+
+    /**
+     * Queue for receiving rpc calls
+     */
+    @RabbitListener(queues = {RabbitMQConfig.QUEUE_NAME_FOR_RPC})
+    public String receiveRpcCallAndReply(String message) {
+        log.info("Received message '{}' on receiver={}, queue={}", message, receiverName, RabbitMQConfig.QUEUE_NAME_FOR_RPC);
+        var res = message + "-" + UUID.randomUUID();
+        log.info("Sent reply={}, on receiver={}, queue={}", res, receiverName, RabbitMQConfig.QUEUE_NAME_FOR_RPC);
+        return res;
     }
 }
