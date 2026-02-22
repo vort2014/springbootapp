@@ -2,13 +2,15 @@ package com.example.springbootapp.rabbitmq;
 
 import com.example.springbootapp.config.RabbitMQConfig;
 import com.example.springbootapp.web.controller.company.CompanyResponseJson;
+import com.rabbitmq.stream.Message;
 import com.rabbitmq.stream.MessageHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Streams were introduced in version 3.9
@@ -18,9 +20,9 @@ import org.springframework.stereotype.Service;
  * You need to enable stream plugin on RabbitMQ message broker.
  * <p>
  * https://docs.spring.io/spring-amqp/reference/stream.html
- *
+ * Use cases:
+ * https://www.rabbitmq.com/docs/streams#use-cases
  * TODO:
- * 1. How to start consumer from predefined position based on offset value
  * 2. What is super stream?
  * 3. Make Docker container in IT tests the same as in compose.yml
  */
@@ -34,7 +36,18 @@ public class RabbitMQStreamListener {
      * Basic stream listener
      */
     @RabbitListener(queues = {RabbitMQConfig.STREAM_NAME1})
-    public void receiveStream(CompanyResponseJson message) {
+    public void receiveStream1(CompanyResponseJson message) {
         log.info("Received message '{}' from stream={}", message, RabbitMQConfig.STREAM_NAME1);
+    }
+
+    /**
+     * The configuration of this listener isn't in the annotation parameters but in the containerFactory configuration.
+     * This allows to consume starting from predefined position (in the containerFactory configuration)
+     */
+    @RabbitListener(queues = RabbitMQConfig.STREAM_NAME3, containerFactory = RabbitMQConfig.STREAM_NAME3_LISTENER_FACTORY_NAME)
+    void receiveStream3(Message message, MessageHandler.Context context) {
+        long offset = context.offset();
+        String body = new String(message.getBodyAsBinary(), StandardCharsets.UTF_8);
+        log.info("offset {} message '{}' from stream={}", offset, body, RabbitMQConfig.STREAM_NAME3);
     }
 }

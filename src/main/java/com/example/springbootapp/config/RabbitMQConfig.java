@@ -10,7 +10,6 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.config.ContainerCustomizer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -24,6 +23,7 @@ import org.springframework.rabbit.stream.support.StreamAdmin;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.Duration;
+import java.util.UUID;
 
 /**
  * https://docs.spring.io/spring-boot/reference/messaging/amqp.html
@@ -46,7 +46,7 @@ public class RabbitMQConfig {
 
     public static final String STREAM_NAME1 = "stream.queue1";
     public static final String STREAM_NAME3 = "stream.queue3";
-    public static final String STREAM_NAME3_LISTENER_FACTORY_NAME = "nativeFactory";
+    public static final String STREAM_NAME3_LISTENER_FACTORY_NAME = "streamContainerFactory";
 
     private static final boolean DURABLE = false; // we don't need messages after restart
 
@@ -166,6 +166,9 @@ public class RabbitMQConfig {
     /**
      * RabbitMQ Streams
      */
+    /**
+     * Create queues
+     */
     @Bean
     @Profile("!test && !it")
     StreamAdmin streamAdmin(Environment env) {
@@ -174,6 +177,9 @@ public class RabbitMQConfig {
             sc.stream(STREAM_NAME3).create();
         });
     }
+    /**
+     * Create producer1
+     */
     @Bean
     @Profile("!test && !it")
     RabbitStreamTemplate stream1(Environment env) {
@@ -181,9 +187,23 @@ public class RabbitMQConfig {
         template.setMessageConverter(jacksonJsonMessageConverter());
         return template;
     }
+    /**
+     * Create producer3
+     */
     @Bean
     @Profile("!test && !it")
     RabbitStreamTemplate stream3(Environment env) {
-        return new RabbitStreamTemplate(env, STREAM_NAME3);
+        var template = new RabbitStreamTemplate(env, STREAM_NAME3);
+        return template;
+    }
+    @Bean(name = STREAM_NAME3_LISTENER_FACTORY_NAME)
+    RabbitListenerContainerFactory<StreamListenerContainer> streamContainerFactory(Environment env) {
+        var factory = new StreamRabbitListenerContainerFactory(env);
+        factory.setNativeListener(true);
+        factory.setConsumerCustomizer((id, builder) ->
+                builder/*.name(UUID.randomUUID().toString())*/
+                        .offset(OffsetSpecification.offset(5)) // start consuming not from the first position
+        );
+        return factory;
     }
 }
