@@ -13,3 +13,12 @@ spring:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_SCHEMA}?${DATABASE_PROPERTIES}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+  activemq:
+    embedded:
+      enabled: false
+#    broker-url: tcp://localhost:61616
+#    user:
+#    password:
+#  jms:
+#    client-id: springbootapp
+#    subscription-durable: false
