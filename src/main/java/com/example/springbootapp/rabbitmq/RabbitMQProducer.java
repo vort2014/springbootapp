@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Producer sends messages to exchanges, then exchange sends message to queue.
@@ -25,7 +24,7 @@ public class RabbitMQProducer {
      * Message is send directly to the queue.
      * Then a receiver listens to this queue and receives this message.
      */
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 0)
     void sendToQueue() {
         var message = UUID.randomUUID().toString();
 //        var message = CompanyResponseJson.builder().id(UUID.randomUUID().toString()).name("companyName").build();
@@ -39,7 +38,7 @@ public class RabbitMQProducer {
      *
      * Then a receiver listens to this queue and receives this message with routing key "foo.bar.baz"
      */
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 0)
     void sendToTopicExchange() {
         var message = UUID.randomUUID().toString();
         rabbitTemplate.convertAndSend(RabbitMQConfig.TOPIC_EXCHANGE_NAME, "foo.bar.baz", message);
@@ -49,7 +48,7 @@ public class RabbitMQProducer {
     /**
      * Messages will be sent to all bind queues despite routing key value
      */
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 0)
     void sendToFanoutExchange() {
         var message = UUID.randomUUID().toString();
         rabbitTemplate.convertAndSend(RabbitMQConfig.FANOUT_EXCHANGE_NAME, "qq.ww.ww", message);
@@ -59,7 +58,7 @@ public class RabbitMQProducer {
     /**
      * Messages will be sent if routing key exactly matches
      */
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 0)
     void sendToDirectExchange() {
         var message = UUID.randomUUID().toString();
         rabbitTemplate.convertAndSend(RabbitMQConfig.DIRECT_EXCHANGE_NAME, "orange", message);
@@ -73,7 +72,7 @@ public class RabbitMQProducer {
      *
      * client message (with replyTo, correlationId headers) > exchange > queue > receiver(server) > replyTo_queue > client
      */
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 0)
     void sendRpcCall() {
         var message = UUID.randomUUID().toString();
         var res = rabbitTemplate.convertSendAndReceive(RabbitMQConfig.DIRECT_EXCHANGE_NAME_FOR_RPC, "some.rpc", message);

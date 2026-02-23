@@ -32,7 +32,6 @@ import java.util.UUID;
  * https://www.rabbitmq.com/tutorials/tutorial-three-spring-amqp
  */
 @Configuration
-@EnableScheduling
 public class RabbitMQConfig {
 
     public static final String QUEUE_NAME1 = "QUEUE_NAME1";

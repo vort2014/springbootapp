@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Profile("!test && !it")
 @Service
@@ -25,7 +24,7 @@ public class RabbitMQStreamProducer {
     /**
      * Send message to stream1
      */
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 0)
     void sendToStream1() {
         var message = CompanyResponseJson.builder().id(UUID.randomUUID().toString()).build();
         stream1.convertAndSend(message);
@@ -35,7 +34,7 @@ public class RabbitMQStreamProducer {
     /**
      * Send 100 messages to stream2
      */
-    @Scheduled(initialDelay = 1)
+    @Scheduled(initialDelay = 0)
     void sendToStream3() {
         for (int i = 0; i < 10; i++) {
             var message = UUID.randomUUID().toString();
