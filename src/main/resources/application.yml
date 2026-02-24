@@ -22,3 +22,4 @@ spring:
 #  jms:
 #    client-id: springbootapp
 #    subscription-durable: false
+ACTIVE_MQ_URL: tcp://${ACTIVE_MQ_HOST}:${ACTIVE_MQ_PORT}

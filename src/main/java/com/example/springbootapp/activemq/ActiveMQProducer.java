@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTopic;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
@@ -13,7 +14,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,11 +27,12 @@ public class ActiveMQProducer {
         Command,
     }
 
+    @Autowired
     @Qualifier(ActiveMQConfig.JMS_TEMPLATE_NAME)
-    private final JmsTemplate jmsTemplate;
+    private JmsTemplate jmsTemplate;
 
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
-    void sendToTopic() {
+    @Scheduled(initialDelay = 0)
+    String sendToTopic() {
         var destinationName = ActiveMQConfig.TOPIC_NAME;
         var topic = new ActiveMQTopic(destinationName); // this is a key
         var payload = UUID.randomUUID().toString();
@@ -45,9 +46,10 @@ public class ActiveMQProducer {
             return message;
         };
         jmsTemplate.convertAndSend(topic, payload, messagePostProcessor);
+        return payload;
     }
 
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(initialDelay = 0)
     void sendToQueue() {
         var destinationName = ActiveMQConfig.QUEUE_NAME;
         var queue = new ActiveMQQueue(destinationName); // this is a key

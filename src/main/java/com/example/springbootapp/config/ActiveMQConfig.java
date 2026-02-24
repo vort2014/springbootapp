@@ -2,6 +2,7 @@ package com.example.springbootapp.config;
 
 import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jms.autoconfigure.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,21 +13,24 @@ import org.springframework.jms.core.JmsTemplate;
 @Configuration
 public class ActiveMQConfig {
 
+    public static final String CONNECTION_FACTORY_NAME = "connectionFactory1";
     public static final String JMS_TEMPLATE_NAME = "jmsTemplate1";
     public static final String LISTENER_CONTAINER_FACTORY_FOR_TOPIC1_NAME = "listenerContainerFactoryTopic1";
     public static final String LISTENER_CONTAINER_FACTORY_FOR_QUEUE1_NAME = "listenerContainerFactoryQueue1";
+    public static final String LISTENER_CONTAINER_FACTORY_FOR_COMPANY_TOPIC_NAME = "listenerContainerFactoryCompanyTopic1";
     public static final String QUEUE_NAME = "queue1";
     public static final String TOPIC_NAME = "topic1";
+    public static final String COMPANY_TOPIC_NAME = "company.topic1";
 
-    private static final String CONNECTION_FACTORY_NAME = "connectionFactory1";
-    private static final String BROKER_URL = "tcp://localhost:61616";
+    @Value("${ACTIVE_MQ_URL}")
+    private String brokerUrl;
 
     /**
      * Here we define url, login and password
      */
     @Bean(CONNECTION_FACTORY_NAME)
     ConnectionFactory connectionFactory1() {
-        return new ActiveMQConnectionFactory(BROKER_URL);
+        return new ActiveMQConnectionFactory(brokerUrl);
     }
 
     /**
@@ -71,6 +75,21 @@ public class ActiveMQConfig {
         // You could still override some settings if necessary.
         factory.setClientId("springbootapp." + QUEUE_NAME);
         factory.setPubSubDomain(Boolean.FALSE); // queue
+        factory.setSubscriptionDurable(Boolean.FALSE); // don't save after broker restart
+        return factory;
+    }
+
+    /**
+     * Topic for receiving companies
+     */
+    @Bean(LISTENER_CONTAINER_FACTORY_FOR_COMPANY_TOPIC_NAME)
+    JmsListenerContainerFactory<?> listenerContainerFactory3(DefaultJmsListenerContainerFactoryConfigurer configurer) {
+        var factory = new DefaultJmsListenerContainerFactory();
+        // This provides all auto-configured defaults to this factory, including the message converter
+        configurer.configure(factory, connectionFactory1());
+        // You could still override some settings if necessary.
+        factory.setClientId("springbootapp." + COMPANY_TOPIC_NAME);
+        factory.setPubSubDomain(Boolean.TRUE); // topic
         factory.setSubscriptionDurable(Boolean.FALSE); // don't save after broker restart
         return factory;
     }
