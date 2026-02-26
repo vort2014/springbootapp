@@ -29,5 +29,11 @@ services:
       - "${DATABASE_PORT}:5432"
     networks:
       - springbootapp-network
-
-
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - springbootapp-network
