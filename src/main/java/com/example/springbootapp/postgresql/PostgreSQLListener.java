@@ -28,7 +28,7 @@ public class PostgreSQLListener {
      * to receive notifications.
      */
     @Scheduled(initialDelay = 0)
-    void subscribe() throws InterruptedException {
+    void subscribe() {
         Runnable runnable = () -> {
             jdbcTemplate.execute((Connection c) -> {
                 isStopped = false;
@@ -53,12 +53,19 @@ public class PostgreSQLListener {
         };
 
         // is case of network or database issues we need to resubscribe
-        while (!Thread.currentThread().isInterrupted()) {
-            if (isStopped) {
-                log.info("Subscribing to {} ...", PostgreSQLMessageBrokerConfig.ORDERS_CHANNEL);
-                Thread.ofVirtual().start(runnable);
-                TimeUnit.SECONDS.sleep(10);
+        // start in virtual thread to make faster JVM shutdown
+        Thread.ofVirtual().start(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                if (isStopped) {
+                    log.info("Subscribing to {} ...", PostgreSQLMessageBrokerConfig.ORDERS_CHANNEL);
+                    Thread.ofVirtual().start(runnable);
+                    try {
+                        TimeUnit.SECONDS.sleep(10);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
-        }
+        });
     }
 }
