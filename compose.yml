@@ -29,5 +29,12 @@ services:
       - "${DATABASE_PORT}:5432"
     networks:
       - springbootapp-network
-
+  kafka:
+    image: apache/kafka
+    container_name: kafka
+    restart: always
+    ports:
+      - "${KAFKA_PORT}:9092"
+    networks:
+      - springbootapp-network
 
