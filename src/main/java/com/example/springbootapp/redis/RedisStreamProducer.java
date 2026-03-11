@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -17,7 +18,10 @@ public class RedisStreamProducer {
 
     private final StringRedisTemplate template;
 
-    @Scheduled(initialDelay = 0)
+    /**
+     * Send message to Redis streams
+     */
+    @Scheduled(initialDelay = 1, timeUnit = TimeUnit.SECONDS)
     void sendToStream() {
         var event = Map.of(
                 "someKey1", "someValue1",

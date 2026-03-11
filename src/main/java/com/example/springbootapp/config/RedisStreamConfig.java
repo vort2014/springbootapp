@@ -17,6 +17,7 @@ import java.time.Duration;
  * to horizontally scale message processing. It requires slightly different configuration
  *
  * https://docs.spring.io/spring-data/redis/reference/redis/redis-streams.html
+ * https://medium.com/@jayanthpawar18/real-time-data-ingestion-and-delivery-using-spring-boot-and-redis-streams-a-beginner-friendly-case-d8775fb2aace
  */
 @Configuration
 @Slf4j
