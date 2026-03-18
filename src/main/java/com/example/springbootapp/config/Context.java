@@ -29,7 +29,7 @@ public class Context {
             @Override
             public @Nullable AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
                 return (ex, method, params) -> {
-                    log.info("Exception caught in SpringEventListener method:", ex);
+                    log.error("Exception caught in AsyncUncaughtExceptionHandler.getAsyncUncaughtExceptionHandler():", ex);
                 };
             }
         };
