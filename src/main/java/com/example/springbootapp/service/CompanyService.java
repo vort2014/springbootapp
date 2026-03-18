@@ -22,7 +22,7 @@ public class CompanyService {
      */
     @Transactional(readOnly = true)
     public Collection<CompanyResponseJson> findAll() {
-        log.info("Finding all employees ...");
+        log.info("Find all companies...");
         return companyRepository.findAll()
                 .stream()
                 .map(CompanyResponseJson::from)

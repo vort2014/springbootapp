@@ -5,6 +5,10 @@ spring:
     scheduling:
       pool:
         size: 5
+    execution:
+      pool:
+        max-size: 16
+        queue-capacity: 100
   jpa:
     open-in-view: false
 #    show-sql: true # show sql statements
