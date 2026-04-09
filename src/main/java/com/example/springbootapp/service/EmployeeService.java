@@ -44,7 +44,7 @@ public class EmployeeService {
      */
     @Transactional
     public EmployeeResponseJson update(String id, EmployeeRequestJson json) {
-        log.info("Update employee with id={}", id);
+        log.info("Update employee={}", id);
 
         // Check that id in the url path is equal to the id in the json body
         if (!json.getId().equals(id)) {
@@ -79,7 +79,7 @@ public class EmployeeService {
      */
     @Transactional
     public void deleteAllById(Collection<String> ids) {
-        log.info("Deleting employees by ids {}", ids);
+        log.info("Deleting employees by ids: {}", ids);
         employeeRepository.deleteAllById(ids);
     }
 }
