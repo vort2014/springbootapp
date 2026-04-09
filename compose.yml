@@ -29,5 +29,17 @@ services:
       - "${DATABASE_PORT}:5432"
     networks:
       - springbootapp-network
-
+  activemq:
+    image: apache/activemq:5.19.2
+    container_name: activemq
+    ports:
+      - "1099:1099" # ActiveMQ JMX MBean server
+      - "1883:1883" # ActiveMQ MQTT connector
+      - "5672:5672" # ActiveMQ AMQP connector
+      - "8161:8161" # ActiveMQ WebConsole!
+      - "61613:61613" # ActiveMQ STOMP connector
+      - "61614:61614" # ActiveMQ WS connector
+      - "61616:61616" # ActiveMQ tcp connector!
+    networks:
+      - springbootapp-network
 

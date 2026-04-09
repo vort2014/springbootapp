@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Order(20)
 public interface CompanyRepository extends JpaRepository<CompanyEntity, String> {
+
+    CompanyEntity findByName(String name);
 }
