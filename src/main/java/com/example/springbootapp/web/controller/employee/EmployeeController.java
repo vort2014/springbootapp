@@ -39,7 +39,7 @@ public class EmployeeController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     EmployeeResponseJson save(@RequestBody @Validated(OnCreate.class) EmployeeRequestJson json) {
-        log.info("Save employee");
+        log.info("Save employee ...");
         return employeeService.save(json);
     }
 
@@ -47,14 +47,14 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.OK)
     EmployeeResponseJson update(@PathVariable String id,
                                 @RequestBody @Validated(OnUpdate.class) EmployeeRequestJson json) {
-        log.info("Update employee={}", id);
+        log.info("Update employee ...");
         return employeeService.update(id, json);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable String id) {
-        log.info("Delete employee={}", id);
+        log.info("Delete employee ...");
         employeeService.deleteAllById(List.of(id));
     }
 }
