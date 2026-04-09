@@ -1,4 +1,4 @@
-package com.example.springbootapp.spiring;
+package com.example.springbootapp.spring;
 
 import com.example.springbootapp.web.controller.company.CompanyResponseJson;
 import lombok.RequiredArgsConstructor;
