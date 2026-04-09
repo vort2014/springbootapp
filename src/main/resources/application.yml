@@ -5,6 +5,10 @@ spring:
     scheduling:
       pool:
         size: 5
+    execution:
+      pool:
+        max-size: 16
+        queue-capacity: 100
   jpa:
     open-in-view: false
 #    show-sql: true # show sql statements
@@ -17,13 +21,3 @@ spring:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_SCHEMA}?${DATABASE_PROPERTIES}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-
-# Manually acknowledge/reject messages
-#  rabbitmq.listener.simple.acknowledge-mode: manual
-
-# these are default values
-#  rabbitmq:
-#    username: guest
-#    password: guest
-#    host: localhost
-#    port: 5672
